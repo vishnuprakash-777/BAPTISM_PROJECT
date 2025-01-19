@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Baptism List</title>
+</head>
+<body>
+    <h1>Baptism List</h1>
+    {% for baptism in baptisms %}
+        <div>
+            <h2>{{ baptism.child_name_first }} {{ baptism.child_name_second }}</h2>
+            <p>Place: {{ baptism.place_of_baptism }}</p>
+            <p>Date: {{ baptism.date_of_baptism }}</p>
+        </div>
+    {% endfor %}
+</body>
+</html>

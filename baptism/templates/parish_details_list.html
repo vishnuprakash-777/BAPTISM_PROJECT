@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parish Details List</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <h2 class="text-center">Parish Details List</h2>
+
+        <!-- Search Bar -->
+        <form method="GET" class="mb-4">
+            <div class="input-group">
+                <input 
+                    type="text" 
+                    name="q" 
+                    class="form-control" 
+                    placeholder="Search by Parish Name or Place" 
+                    value="{{ request.GET.q }}">
+                <button class="btn btn-primary" type="submit">Search</button>
+            </div>
+        </form>
+
+        <!-- Table -->
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Deanery</th>
+                    <th>Parish Name</th>
+                    <th>Place</th>
+                    <th>Email</th>
+                    <th>Contact No</th>
+                    <th>Status</th>
+                    <th>Created Time</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for parish in page_obj.object_list %}
+                <tr>
+                    <td>{{ parish.deanery }}</td>
+                    <td>{{ parish.name_of_parish }}</td>
+                    <td>{{ parish.place_of_parish }}</td>
+                    <td>{{ parish.email }}</td>
+                    <td>{{ parish.contact_no }}</td>
+                    <td>{{ parish.status }}</td>
+                    <td>{{ parish.created_time|date:"Y-m-d H:i:s" }}</td>
+                    <td>
+                        <a href="{% url 'parish_details_edit' parish.parish_id %}" class="btn btn-sm btn-warning">Edit</a>
+                        <a href="{% url 'parish_details_delete' parish.parish_id %}" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center">No parishes found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Pagination Controls -->
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+                {% for num in page_obj.paginator.page_range %}
+                <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                    <a class="page-link" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ num }}</a>
+                </li>
+                {% endfor %}
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+
+        <!-- Add New Parish Button -->
+        <a href="{% url 'parish_details_add' %}" class="btn btn-success mt-3">Add New Parish</a>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

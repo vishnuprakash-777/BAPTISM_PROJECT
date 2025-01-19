@@ -1,0 +1,210 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Open+Sans|Pinyon+Script|Rochester');
+
+        .cursive {
+            font-family: 'Pinyon Script', cursive;
+        }
+
+        .sans {
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .block {
+            display: block;
+        }
+
+        .underline {
+            border-bottom: 1px solid #777;
+            padding: 5px;
+            margin-bottom: 15px;
+        }
+
+        .margin-0 {
+            margin: 0;
+        }
+
+        .padding-0 {
+            padding: 0;
+        }
+
+        .pm-empty-space {
+            height: 40px;
+            width: 100%;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #fff; /* White background */
+        }
+
+        @media print {
+            @page {
+                size: A4 landscape; /* Landscape orientation */
+                margin: 0;
+            }
+        }
+
+        .pm-certificate-container {
+            position: relative;
+            width: 100%; /* Adjust to fit landscape */
+            height: 100%; /* Adjust to fit landscape */
+            background-color: #f3e5ab;
+            color: #333;
+            font-family: 'Open Sans', sans-serif;
+            box-shadow: none; /* Remove shadow for PDF */
+            overflow: hidden;
+        }
+
+        .outer-border {
+            width: 100%; /* Stretch to landscape */
+            height: 100%; /* Stretch to landscape */
+            position: absolute;
+            left: 0;
+            top: 0;
+            border: 2px solid #fff;
+        }
+
+        .inner-border {
+            width: 95%; /* Inner content slightly smaller */
+            height: 90%;
+            position: absolute;
+            left: 2.5%;
+            top: 5%;
+            border: 2px solid #fff;
+        }
+
+        .pm-certificate-border {
+            position: relative;
+            width: 90%;
+            height: 80%;
+            padding: 20px;
+            border: 1px solid #E1E5F0;
+            background-color: #fff; /* White background */
+            margin: auto;
+        }
+
+        .pm-certificate-header {
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .pm-certificate-title {
+            position: relative;
+            text-align: center;
+            font-size: 50px;
+        }
+
+        .pm-certificate-body {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .pm-name-text {
+            font-size: 30px;
+        }
+
+        .pm-earned-text {
+            font-size: 20px;
+        }
+
+        .pm-credits-text {
+            font-size: 10px;
+        }
+
+        .pm-certified {
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .pm-certificate-footer {
+            width: 80%;
+            height: 100px;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        /* New style for Times New Roman and larger font */
+        .times-large {
+            font-family: 'Times New Roman', Times, serif; /* Set font to Times New Roman */
+            font-size: 35px; /* Larger font size */
+        }
+
+        .large-text {
+            font-size: 35px;
+        }
+
+        .signature-image {
+            max-width: 100px; /* Adjust the size as needed */
+            height: auto;
+            display: block;
+            margin: 5px auto;
+        }
+        .qr-code {
+            text-align: center;
+        }
+        .qr-code img {
+        max-width: 50px; 
+        height: auto;    
+        margin: 0 auto;  
+        display: block;
+    }
+    </style>
+</head>
+<body>
+    <div class="container pm-certificate-container">
+        <div class="outer-border"></div>
+        <div class="inner-border"></div>
+
+        <div class="pm-certificate-border">
+            <div class="pm-certificate-header">
+                <div class="pm-certificate-title cursive">
+                    <h2>Certificate of Baptism</h2>
+                </div>
+            </div>
+
+            <div class="pm-certificate-body">
+                <div>
+                    <div class="underline">
+                        <span class="pm-name-text bold times-large">{{ child_name }}</span>
+                    </div>
+                    <span class="pm-earned-text cursive large-text">
+                        was baptized in the name of the Father, and of the Son, and of the Holy Spirit on
+                    </span>
+                    <div class="underline">
+                        <span class="pm-credits-text times-large">{{ baptism_date }} {{ baptism_month }} {{ baptism_year }}</span>
+                    </div>
+                    <span class="pm-earned-text cursive large-text">at</span>
+                    <div class="underline">
+                        <span class="pm-credits-text times-large">{{ baptism_place }}</span>
+                    </div>
+                    <div class="qr-code">
+                        <img src="{{ certificate_qr_code }}" alt="QR Code">
+                        <span class="pm-credits-text sans">Scan QR Code for Details</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pm-certificate-footer">
+                <div style="float: left; text-align: center; font-weight: bold;">
+                    <span class="pm-credits-text sans ">CERTIFICATE CODE:{{certificate_code}}</span>
+                    <div class="underline"></div>
+                </div>
+                <div style="float: right; text-align: center;">
+                    <span class="pm-credits-text sans">Signature</span>
+                    <div class="underline"></div>
+                </div>  
+            </div>
+        </div>
+    </div>
+</body>
+</html>
