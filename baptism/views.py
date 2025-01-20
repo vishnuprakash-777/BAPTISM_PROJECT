@@ -1059,3 +1059,7 @@ def certificate_details(request, certificate_code):
     certificate = get_object_or_404(Certificate, certificate_code=certificate_code)
     
     return render(request, 'certificate_details.html', {'certificate': certificate})
+
+
+def example(request):
+    return render(request,'exmaple.html')

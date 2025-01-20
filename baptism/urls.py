@@ -54,7 +54,8 @@ from .views import (
     certificate_edit,
     certificate_list,
     verify_certificate,
-    certificate_details
+    certificate_details,
+    example
 
     
 
@@ -138,7 +139,7 @@ urlpatterns = [
     path('generate-certificate/<int:id>/', generate_certificate, name='generate_certificate'),
     path('verify/', verify_certificate, name='verify_certificate'),
     path('verify/<str:certificate_code>/', certificate_details, name='certificate_details'),
-
+    path('example/',example,name='example')
 
 
 ]
