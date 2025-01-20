@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate Generation</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f3f4f6, #e2e8f0);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            background: #ffffff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #2d3748;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        thead {
+            background: #4a5568;
+            color: #ffffff;
+        }
+
+        thead th {
+            text-align: left;
+            padding: 15px;
+            font-size: 1.2rem;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f7fafc;
+        }
+
+        tbody tr:hover {
+            background: #edf2f7;
+            cursor: pointer;
+        }
+
+        tbody td {
+            padding: 15px;
+            font-size: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        a {
+            display: inline-block;
+            padding: 10px 15px;
+            background: #4299e1;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+
+        a:hover {
+            background: #3182ce;
+        }
+
+        @media (max-width: 768px) {
+            table {
+                font-size: 0.9rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Certificate Generation</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Child Name</th>
+                    <th>Place</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for baptism in baptisms %}
+                <tr>
+                    <td>{{ baptism.basic_baptism_id }}</td>
+                    <td>{{ baptism.child_name_first }} {{ baptism.child_name_second }}</td>
+                    <td>{{ baptism.place_of_baptism_name }}</td>
+                    <td>{{ baptism.date_of_baptism }}</td>
+                    <td>{{ baptism.time_of_baptism }}</td>
+                    <td>
+                        <a href="{% url 'generate_certificate' baptism.basic_baptism_id %}">
+                            Generate Certificate
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
