@@ -220,6 +220,7 @@ def parish_details_list(request):
 
 # Add new parish view
 def parish_details_add(request):
+    deaneries = Deanery.objects.all()  # Fetch all deanery options
     if request.method == 'POST':
         form = ParishDetailsForm(request.POST)
         if form.is_valid():
@@ -227,10 +228,11 @@ def parish_details_add(request):
             return redirect('parish_details_list')  # Redirect to list page after saving
     else:
         form = ParishDetailsForm()
-    return render(request, 'parish_details_add.html', {'form': form})
+    return render(request, 'parish_details_add.html', {'form': form,'deaneries': deaneries},)
 
 # Edit existing parish view
 def parish_details_edit(request, pk):
+    deaneries = Deanery.objects.all() 
     parish = get_object_or_404(ParishDetails, pk=pk)  # Retrieve the existing parish record
     if request.method == 'POST':
         form = ParishDetailsForm(request.POST, instance=parish)  # Bind form to existing record
@@ -239,7 +241,7 @@ def parish_details_edit(request, pk):
             return redirect('parish_details_list')  # Redirect to list page after saving
     else:
         form = ParishDetailsForm(instance=parish)  # Prepopulate form with existing parish data
-    return render(request, 'parish_details_edit.html', {'form': form})
+    return render(request, 'parish_details_edit.html', {'form': form,'deaneries': deaneries,'parish': parish})
 
 # Delete parish view
 def parish_details_delete(request, parish_id):
