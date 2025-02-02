@@ -15,7 +15,16 @@
         <link rel="stylesheet" href="{% static 'dist/assets/css/styles.css' %}" />
 
         <style>
-       
+                   footer.bg-dark {
+            position: relative;
+            bottom: 0;
+            width: 100%;
+            z-index: 10;
+        }
+        .body-wrapper {
+            min-height: 80vh;
+            padding-bottom: 80px;
+        }
             .custom-table {
                 width: 100%; /* Set table width to match its parent container */
                 max-width: 950px; /* Optionally, limit the max width to match the certificate's width */

@@ -3,8 +3,6 @@ from .views import (
     baptism_form_view, 
     upload_parish_details, 
     success_page, 
-    login_view, 
-    register_view, 
     upload_baptism_advanced, 
     upload_field_table,
     field_table_list, 
@@ -55,8 +53,13 @@ from .views import (
     certificate_list,
     verify_certificate,
     certificate_details,
-    example
-
+    example,
+    approved_baptisms2,
+    pending_baptisms,
+    rejected_baptisms,
+    secretary_login,
+    secretary_register,
+    logout_user
     
 
 
@@ -68,8 +71,6 @@ urlpatterns = [
     path('', home_page, name='home_page'), 
     path('upload-parish/', upload_parish_details, name='upload_parish'),
     path('parish-success/', success_page, name='parish_success'),
-    path('login/', login_view, name='login'),
-    path('register/', register_view, name='register'),
     path('upload-baptism-advanced/', upload_baptism_advanced, name='upload_baptism_advanced'),
     path('upload-field/', upload_field_table, name='upload_field'),
     path('upload-answer/',upload_answer_details , name='upload_answer_details'),
@@ -130,16 +131,24 @@ urlpatterns = [
     path('section/', home_page, name='home_page'),
     path('section/<str:section_name>/', section_questions, name='section_questions'),
 
-    path('baptism/', baptism_list_and_edit, name='baptism_list_and_edit'),
+    path('dashboard/manage-baptism/', baptism_list_and_edit, name='baptism_list_and_edit'),
 
 
 
     path('dashboard/', baptism_dashboard, name='baptism_dashboard'),
-    path('approved-baptisms/', approved_baptisms, name='approved_baptisms'),
+    path('dashboard/approved-baptisms/', approved_baptisms, name='approved_baptisms'),
     path('generate-certificate/<int:id>/', generate_certificate, name='generate_certificate'),
     path('verify/', verify_certificate, name='verify_certificate'),
     path('verify/<str:certificate_code>/', certificate_details, name='certificate_details'),
-    path('example/',example,name='example')
+    path('example/',example,name='example'),
+
+    path('dashboard/approved/', approved_baptisms2, name='approved_baptisms2'),
+    path('dashboard/rejected/', rejected_baptisms, name='rejected_baptisms'),
+    path('dashboard/pending/', pending_baptisms, name='pending_baptisms'),
+
+    path("login/", secretary_login, name="secretary_login"),
+    path("register/", secretary_register, name="secretary_register"),
+    path("logout/", logout_user, name="logout"),
 
 
 ]

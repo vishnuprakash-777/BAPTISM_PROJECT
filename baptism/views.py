@@ -3,8 +3,6 @@ from .forms import BaptismForm,ParishDetailsForm,BaptismAdvancedForm,FieldTableF
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.hashers import make_password, check_password
-from .models import LoginDetails
-from .forms import LoginForm, RegisterForm
 from datetime import datetime
 from django.core.paginator import Paginator
 from django.shortcuts import render
@@ -39,43 +37,6 @@ def success_page(request):
 
 
 
-
-def login_view(request):
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            user_name = form.cleaned_data['user_name']
-            password = form.cleaned_data['password']
-
-            try:
-                user = LoginDetails.objects.get(user_name=user_name)
-                if check_password(password, user.password):
-                    user.last_login = now()
-                    user.save()
-                    return redirect('/baptism/')  # Redirect to baptism page
-                else:
-                    messages.error(request, "Invalid username or password")
-            except LoginDetails.DoesNotExist:
-                messages.error(request, "Invalid username or password")
-    else:
-        form = LoginForm()
-
-    return render(request, 'baptism/login.html', {'form': form})
-
-
-def register_view(request):
-    if request.method == 'POST':
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.password = make_password(form.cleaned_data['password'])  # Hash the password
-            user.save()
-            messages.success(request, "Account created successfully!")
-            return redirect('login')
-    else:
-        form = RegisterForm()
-
-    return render(request, 'baptism/register.html', {'form': form})
 
 
 
@@ -804,16 +765,18 @@ def baptism_list_and_edit(request):
     return render(request, 'baptism/baptism_list_and_edit.html', {'baptisms': baptisms})
 
 
-
-from django.shortcuts import render
-from .models import Baptism
-
 def approved_baptisms(request):
-    baptisms = Baptism.objects.filter(status='Approved')
+    baptisms_list = Baptism.objects.filter(status='Approved').order_by('-date_of_baptism')  # Sorting by date
+    paginator = Paginator(baptisms_list, 10)  # Show 10 baptisms per page
+    
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     context = {
-        'baptisms': baptisms
+        'page_obj': page_obj
     }
+    
     return render(request, 'approved_baptisms.html', context)
+
 
 '''from django.http import HttpResponse
 from .models import Baptism
@@ -1065,3 +1028,108 @@ def certificate_details(request, certificate_code):
 
 def example(request):
     return render(request,'exmaple.html')
+
+
+from django.core.paginator import Paginator
+from django.shortcuts import render
+from django.utils.timezone import now
+import datetime
+from .models import Baptism
+
+def approved_baptisms2(request):
+    return filter_baptisms_by_month(request, 'Approved', 'approved_baptisms2.html')
+
+def rejected_baptisms(request):
+    return filter_baptisms_by_month(request, 'Rejected', 'rejected_baptisms.html')
+
+def pending_baptisms(request):
+    return filter_baptisms_by_month(request, 'Pending', 'pending_baptisms.html')
+
+def filter_baptisms_by_month(request, status, template_name):
+    # Get current month and year
+    current_year = now().year
+    current_month = now().month
+
+    # Get user-selected month & year (default to current month/year)
+    selected_month = int(request.GET.get('month', current_month))
+    selected_year = int(request.GET.get('year', current_year))
+
+    # Filter baptisms by status and date
+    baptisms = Baptism.objects.filter(
+        status=status,
+        date_of_baptism__year=selected_year,
+        date_of_baptism__month=selected_month
+    ).order_by('-date_of_baptism')
+
+    # Pagination setup (10 records per page)
+    paginator = Paginator(baptisms, 8)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # Pass months and years list to template
+    months = [
+        (1, "January"), (2, "February"), (3, "March"), (4, "April"),
+        (5, "May"), (6, "June"), (7, "July"), (8, "August"),
+        (9, "September"), (10, "October"), (11, "November"), (12, "December")
+    ]
+    
+    # Generate a list of last 5 years dynamically
+    years = [current_year + i for i in range(5)]
+
+    return render(request, template_name, {
+        'page_obj': page_obj,
+        'selected_month': selected_month,
+        'selected_year': selected_year,
+        'months': months,
+        'years': years,
+        'status': status
+    })
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.contrib.auth.hashers import check_password
+from .forms import SecretaryLoginForm,SecretaryRegistrationForm
+from .models import LoginDetails
+
+def secretary_login(request):
+    if request.method == "POST":
+        form = SecretaryLoginForm(request.POST)
+        if form.is_valid():
+            user_name = form.cleaned_data["user_name"]
+            password = form.cleaned_data["password"]
+
+            try:
+                user = LoginDetails.objects.get(user_name=user_name, role="Secretary")
+                if check_password(password, user.password):  # Secure password checking
+                    request.session["user_id"] = user.user_id  # Store session
+                    messages.success(request, "Login successful!")
+                    return redirect("baptism_dashboard")  # Redirect to Baptism Dashboard
+                else:
+                    messages.error(request, "Incorrect username or password.")  # Error message
+            except LoginDetails.DoesNotExist:
+                messages.error(request, "Incorrect username or password.")  # Consistent error message
+    else:
+        form = SecretaryLoginForm()
+
+    return render(request, "secretary_login.html", {"form": form})
+
+
+
+def secretary_register(request):
+    if request.method == "POST":
+        form = SecretaryRegistrationForm(request.POST)
+        if form.is_valid():
+            form.save()  # Save the new secretary user
+            messages.success(request, "Registration successful! Please log in.")
+            return redirect("secretary_login")
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = SecretaryRegistrationForm()
+
+    return render(request, "secretary_register.html", {"form": form})
+
+def logout_user(request):
+    request.session.flush()  # Clear session
+    messages.success(request, "Logged out successfully.")
+    return redirect("secretary_login")

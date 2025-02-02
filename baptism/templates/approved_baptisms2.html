@@ -34,6 +34,12 @@
         .pagination {
             margin-top: 20px;
         }
+        .form-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+           
+        }
     </style>
 
     <title>Parish Details</title>
@@ -44,11 +50,11 @@
             <div class="d-flex justify-content-between flex-md-nowrap flex-wrap">
                 <h2 class="fs-15 fw-bolder mb-0">Baptism Management Dashboard</h2>
                 <div class="d-flex align-items-center gap-6">
-                  <a href="{% url 'baptism_dashboard' %}" class="text-muted fw-bolder link-primary fs-3 text-uppercase">Home_Page</a>
+                    <a href="{% url 'baptism_dashboard' %}" class="text-muted fw-bolder link-primary fs-3 text-uppercase">Home_Page</a>
                     <iconify-icon icon="solar:alt-arrow-right-outline" class="fs-5 text-muted"></iconify-icon>
                     <a href="{% url 'logout' %}" class="text-primary link-primary fw-bolder fs-3 text-uppercase">
-                      Logout
-                    </a>
+                        Logout
+                      </a>
                 </div>
             </div>
         </div>
@@ -60,43 +66,59 @@
                 <div class="row align-items-center">
                     <div class="col-12">
                         <div class="d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-4 mb-sm-0 card-title">Certificate Generation</h4>
-                            <iconify-icon icon="solar:home-2-line-duotone" class="fs-6"></iconify-icon>
+                            <h4 class="mb-4 mb-sm-0 card-title">Approved Baptisms</h4>
+                            <iconify-icon icon="mdi:close-circle-outline" class="fs-5 text-danger"></iconify-icon>
                         </div>
                     </div>
                 </div>
             </div>
-
+            <div class="form-container">
+            <form method="GET">
+                <label for="month" class="text-muted">Select Month:</label>
+                <select name="month" id="month" class="btn bg-secondary-subtle text-secondary  btn-sm dropdown-toggle" >
+                    {% for month_number, month_name in months %}
+                        <option value="{{ month_number }}" {% if selected_month == month_number %}selected{% endif %}>
+                            {{ month_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+        
+                <label for="year" class="text-muted">Select Year:</label>
+                <select name="year" id="year" class="btn bg-secondary-subtle text-secondary  btn-sm dropdown-toggle" >
+                    {% for year in years %}
+                        <option value="{{ year }}" {% if selected_year == year %}selected{% endif %}>
+                            {{ year }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-sm btn-primary" style="text-align: center;">Filter</button>
+            </form>
+            
+        </div>
+        
             <div class="table-responsive mt-4">
-                <table class="table table-hover table-success custom-table">
+                <table class="table table-hover table-success">
                     <thead class="bg-success text-white">
                         <tr>
-                            <th>ID</th>
                             <th>Child Name</th>
-                            <th>Place</th>
-                            <th>Date</th>
-                            <th>Time</th>
-                            <th>Actions</th>
+                            <th>Date of Baptism</th>
+                            <th>Place of Baptism</th>
+                            <th>Father Name</th>
+                            <th>Mother Name</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for baptism in page_obj %}
                         <tr>
-                            <td>{{ baptism.basic_baptism_id }}</td>
                             <td>{{ baptism.child_name_first }} {{ baptism.child_name_second }}</td>
-                            <td>{{ baptism.place_of_baptism_name }}</td>
                             <td>{{ baptism.date_of_baptism }}</td>
-                            <td>{{ baptism.time_of_baptism }}</td>
-                            <td>
-                                <a class="btn waves-effect waves-light btn-primary btn-lg"
-                                   href="{% url 'generate_certificate' baptism.basic_baptism_id %}">
-                                   Generate Certificate
-                                </a>
-                            </td>
+                            <td>{{ baptism.place_of_baptism_name }}</td>
+                            <td>{{ baptism.father_name }}</td>
+                            <td>{{ baptism.mother_name }}</td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="6" class="text-center text-muted">No approved baptisms found.</td>
+                            <td colspan="5">No approved baptisms found.</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -168,3 +190,4 @@
     <script src="{% static 'dist/assets/js/dashboards/dashboard3.js' %}"></script>
 </body>
 </html>
+

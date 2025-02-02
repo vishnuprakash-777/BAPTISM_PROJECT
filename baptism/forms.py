@@ -1,5 +1,5 @@
 from django import forms
-from .models import Baptism,ParishDetails,LoginDetails,BaptismAdvanced,FieldTable,Option
+from .models import Baptism,ParishDetails,BaptismAdvanced,FieldTable,Option
 
 class BaptismForm(forms.ModelForm):
     class Meta:
@@ -39,28 +39,6 @@ class ParishDetailsForm(forms.ModelForm):
         }
 
 
-
-class LoginForm(forms.Form):
-    user_name = forms.CharField(max_length=255, label="Username")
-    password = forms.CharField(widget=forms.PasswordInput, label="Password")
-
-class RegisterForm(forms.ModelForm):
-    confirm_password = forms.CharField(widget=forms.PasswordInput, label="Confirm Password")
-
-    class Meta:
-        model = LoginDetails
-        fields = ['user_name', 'password', 'email', 'contact_no', 'parish_id', 'role', 'status']
-        widgets = {
-            'password': forms.PasswordInput(),
-        }
-
-    def clean(self):
-        cleaned_data = super().clean()
-        password = cleaned_data.get('password')
-        confirm_password = cleaned_data.get('confirm_password')
-
-        if password and confirm_password and password != confirm_password:
-            self.add_error('confirm_password', "Passwords do not match")
 
 
 class BaptismAdvancedForm(forms.ModelForm):
@@ -146,3 +124,39 @@ class DeaneryForm(forms.ModelForm):
 
 
 
+from django import forms
+from django.contrib.auth.hashers import make_password
+from .models import LoginDetails
+
+class SecretaryLoginForm(forms.Form):
+    user_name = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), required=True)
+
+class SecretaryRegistrationForm(forms.ModelForm):
+    confirm_password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), required=True)
+
+    class Meta:
+        model = LoginDetails
+        fields = ['user_name', 'password', 'contact_no', 'email']
+        widgets = {
+            'password': forms.PasswordInput(attrs={'class': 'form-control'}),
+            'user_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'contact_no': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password")
+        confirm_password = cleaned_data.get("confirm_password")
+
+        if password and confirm_password and password != confirm_password:
+            self.add_error('confirm_password', "Passwords do not match.")
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.password = make_password(self.cleaned_data["password"])  # Encrypt password
+        user.role = "Secretary"  # Set default role
+        if commit:
+            user.save()
+        return user
