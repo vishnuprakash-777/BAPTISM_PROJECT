@@ -139,7 +139,7 @@ class SecretaryRegistrationForm(forms.ModelForm):
         model = LoginDetails
         fields = ['user_name', 'password', 'contact_no', 'email']
         widgets = {
-            'password': forms.PasswordInput(attrs={'class': 'form-control'}),
+            'password': forms.PasswordInput(attrs={'type': 'text', 'class': 'form-control'}),
             'user_name': forms.TextInput(attrs={'class': 'form-control'}),
             'contact_no': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),

@@ -765,7 +765,7 @@ def baptism_list_and_edit(request):
     return render(request, 'baptism/baptism_list_and_edit.html', {'baptisms': baptisms})
 
 
-def approved_baptisms(request):
+'''def approved_baptisms(request):
     baptisms_list = Baptism.objects.filter(status='Approved').order_by('-date_of_baptism')  # Sorting by date
     paginator = Paginator(baptisms_list, 10)  # Show 10 baptisms per page
     
@@ -775,7 +775,7 @@ def approved_baptisms(request):
         'page_obj': page_obj
     }
     
-    return render(request, 'approved_baptisms.html', context)
+    return render(request, 'approved_baptisms.html', context)'''
 
 
 '''from django.http import HttpResponse
@@ -1035,6 +1035,9 @@ from django.shortcuts import render
 from django.utils.timezone import now
 import datetime
 from .models import Baptism
+
+def approved_baptisms(request):
+    return filter_baptisms_by_month(request, 'Approved', 'approved_baptisms.html')
 
 def approved_baptisms2(request):
     return filter_baptisms_by_month(request, 'Approved', 'approved_baptisms2.html')

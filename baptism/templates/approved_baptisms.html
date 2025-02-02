@@ -34,6 +34,12 @@
         .pagination {
             margin-top: 20px;
         }
+        .form-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+           
+        }
     </style>
 
     <title>Parish Details</title>
@@ -66,7 +72,28 @@
                     </div>
                 </div>
             </div>
-
+            <div class="form-container">
+              <form method="GET">
+                  <label for="month" class="text-muted">Select Month:</label>
+                  <select name="month" id="month" class="btn bg-secondary-subtle text-secondary  btn-sm dropdown-toggle" >
+                      {% for month_number, month_name in months %}
+                          <option value="{{ month_number }}" {% if selected_month == month_number %}selected{% endif %}>
+                              {{ month_name }}
+                          </option>
+                      {% endfor %}
+                  </select>
+          
+                  <label for="year" class="text-muted">Select Year:</label>
+                  <select name="year" id="year" class="btn bg-secondary-subtle text-secondary  btn-sm dropdown-toggle" >
+                      {% for year in years %}
+                          <option value="{{ year }}" {% if selected_year == year %}selected{% endif %}>
+                              {{ year }}
+                          </option>
+                      {% endfor %}
+                  </select>
+                  <button type="submit" class="btn btn-sm btn-primary" style="text-align: center;">Filter</button>
+              </form>
+            </div>
             <div class="table-responsive mt-4">
                 <table class="table table-hover table-success custom-table">
                     <thead class="bg-success text-white">
