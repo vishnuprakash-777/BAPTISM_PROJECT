@@ -9,14 +9,18 @@ from django.shortcuts import render
 from .models import FieldTable
 
 def baptism_form_view(request):
+    parishes = ParishDetails.objects.all()
     if request.method == "POST":
-        form = BaptismForm(request.POST)
+        form = BaptismForm(request.POST)  # Ensure form data is passed
         if form.is_valid():
             form.save()
-            return redirect('field_table_success')  # Replace with your success URL
+            return redirect('field_table_success')  # Ensure 'field_table_success' URL is defined
+        else:
+            print(form.errors)  # Debugging: Print form errors to console
     else:
         form = BaptismForm()
-    return render(request, 'baptism/baptism_form.html', {'form': form})
+
+    return render(request, 'baptism/baptism_form.html', {'form': form, 'parishes': parishes})
 
 
 from django.shortcuts import redirect
