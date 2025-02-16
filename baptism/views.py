@@ -8,19 +8,32 @@ from django.core.paginator import Paginator
 from django.shortcuts import render
 from .models import FieldTable
 
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import Baptism, ParishDetails
+from .forms import BaptismForm
+
 def baptism_form_view(request):
     parishes = ParishDetails.objects.all()
+    user_id = request.session.get("user_id")  # Retrieve user_id from session
+
     if request.method == "POST":
-        form = BaptismForm(request.POST)  # Ensure form data is passed
+        form = BaptismForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('field_table_success')  # Ensure 'field_table_success' URL is defined
+            baptism = form.save(commit=False)
+            baptism.user_id = user_id  # Assign logged-in user_id
+            baptism.save()
+            messages.success(request, "Baptism details submitted successfully!")
+            return redirect('field_table_success')  # Ensure this URL exists
         else:
-            print(form.errors)  # Debugging: Print form errors to console
+            messages.error(request, "Please correct the errors below.")
+            print(form.errors)  # Debugging
+
     else:
         form = BaptismForm()
 
-    return render(request, 'baptism/baptism_form.html', {'form': form, 'parishes': parishes})
+    return render(request, 'baptism/baptism_form.html', {'form': form, 'parishes': parishes, 'user_id': user_id})
+
 
 
 from django.shortcuts import redirect
@@ -573,9 +586,20 @@ def section_questions(request, section_name):
 
 
 
+from django.shortcuts import render, redirect
+from .models import Baptism  # Import the Baptism model
+
 def home_page(request):
-    # Redirect to the first section when "Next" is clicked
-    return render(request, "home.html")
+    user_id = request.session.get("user_id")  # Retrieve user_id from session
+
+    if not user_id:
+        return redirect("user_login")  # Redirect to login if user is not logged in
+
+    # Fetch all baptism records associated with the logged-in user
+    baptisms = Baptism.objects.filter(user_id=user_id).order_by('-created_time')
+
+    return render(request, "home.html", {"user_id": user_id, "baptisms": baptisms})
+
 
 
 from django.shortcuts import render, redirect
@@ -1095,48 +1119,75 @@ def filter_baptisms_by_month(request, status, template_name):
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.hashers import check_password
-from .forms import SecretaryLoginForm,SecretaryRegistrationForm
+from .forms import SecretaryLoginForm, SecretaryRegistrationForm, UserLoginForm, UserRegistrationForm
 from .models import LoginDetails
 
-def secretary_login(request):
+# Common login function
+def authenticate_user(request, role, login_form_class, template_name, dashboard_redirect):
     if request.method == "POST":
-        form = SecretaryLoginForm(request.POST)
+        form = login_form_class(request.POST)
         if form.is_valid():
             user_name = form.cleaned_data["user_name"]
             password = form.cleaned_data["password"]
 
             try:
-                user = LoginDetails.objects.get(user_name=user_name, role="Secretary")
-                if check_password(password, user.password):  # Secure password checking
-                    request.session["user_id"] = user.user_id  # Store session
+                user = LoginDetails.objects.get(user_name=user_name, role=role)
+                if check_password(password, user.password):  
+                    request.session["user_id"] = user.user_id  
                     messages.success(request, "Login successful!")
-                    return redirect("baptism_dashboard")  # Redirect to Baptism Dashboard
-                else:
-                    messages.error(request, "Incorrect username or password.")  # Error message
+                    return redirect(dashboard_redirect)  
             except LoginDetails.DoesNotExist:
-                messages.error(request, "Incorrect username or password.")  # Consistent error message
+                pass  # Avoid exposing username existence
+
+            messages.error(request, "Incorrect username or password.")  
+
     else:
-        form = SecretaryLoginForm()
+        form = login_form_class()
 
-    return render(request, "secretary_login.html", {"form": form})
+    return render(request, template_name, {"form": form})
 
 
+# Secretary Login
+def secretary_login(request):
+    return authenticate_user(request, role="Secretary", login_form_class=SecretaryLoginForm, template_name="secretary_login.html", dashboard_redirect="baptism_dashboard")
 
-def secretary_register(request):
+
+# Common registration function
+def register_user(request, role, registration_form_class, login_redirect, template_name):
     if request.method == "POST":
-        form = SecretaryRegistrationForm(request.POST)
+        form = registration_form_class(request.POST)
         if form.is_valid():
-            form.save()  # Save the new secretary user
+            user = form.save(commit=False)
+            user.role = role  # Assign role
+            user.save()
             messages.success(request, "Registration successful! Please log in.")
-            return redirect("secretary_login")
+            return redirect(login_redirect)
         else:
             messages.error(request, "Please correct the errors below.")
     else:
-        form = SecretaryRegistrationForm()
+        form = registration_form_class()
 
-    return render(request, "secretary_register.html", {"form": form})
+    return render(request, template_name, {"form": form})
 
+
+# Secretary Registration
+def secretary_register(request):
+    return register_user(request, role="Secretary", registration_form_class=SecretaryRegistrationForm, login_redirect="secretary_login", template_name="secretary_register.html")
+
+
+# User Login
+def user_login(request):
+    return authenticate_user(request, role="User", login_form_class=UserLoginForm, template_name="user_login.html", dashboard_redirect="home_page")
+
+
+# User Registration
+def user_register(request):
+    return register_user(request, role="User", registration_form_class=UserRegistrationForm, login_redirect="user_login", template_name="user_register.html")
+
+
+# Logout for both users and secretaries
 def logout_user(request):
-    request.session.flush()  # Clear session
+    request.session.flush()  
     messages.success(request, "Logged out successfully.")
-    return redirect("secretary_login")
+    return redirect("secretary_login")  # Redirect to secretary login or user login as needed
+

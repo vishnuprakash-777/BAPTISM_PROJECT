@@ -59,7 +59,9 @@ from .views import (
     rejected_baptisms,
     secretary_login,
     secretary_register,
-    logout_user
+    logout_user,
+    user_login,
+    user_register
     
 
 
@@ -149,6 +151,10 @@ urlpatterns = [
     path("login/", secretary_login, name="secretary_login"),
     path("register/", secretary_register, name="secretary_register"),
     path("logout/", logout_user, name="logout"),
+
+    path("userlogin/", user_login, name="user_login"),
+    path("userregister/", user_register, name="user_register"),
+    path("userlogout/", logout_user, name="logout"),
 
 
 ]
