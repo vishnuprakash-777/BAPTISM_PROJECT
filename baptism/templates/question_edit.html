@@ -1,77 +1,177 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr" data-bs-theme="light" data-color-theme="Blue_Theme" data-layout="vertical">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Option</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/png" href="{% static '/dist/assets/images/logos/favicon.png' %}" />
+    
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="{% static 'dist/assets/css/styles.css' %}" />
+    
     <style>
-        /* Custom CSS to highlight the dropdown section */
-        .highlight-section {
-            background-color: #f0f8ff; /* Light blue background */
-            border: 2px solid #007bff; /* Blue border */
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-        }
-
-        .highlight-section label {
-            font-weight: bold;
-            color: #007bff;
-        }
-
-        .highlight-section select {
-            background-color: #ffffff;
-            border: 1px solid #007bff;
-            border-radius: 4px;
-            padding: 8px;
+        footer.bg-dark {
+            position: fixed;
+            bottom: 0;
             width: 100%;
+            z-index: 10;
+        }
+        .body-wrapper {
+            padding-bottom: 80px;
+        }
+        .custom-table {
+            width: 100%;
+            max-width: 950px;
+            margin: 0 auto;
         }
     </style>
+
+    <title>Edit Question Details</title>
 </head>
-<body class="bg-light">
-    <div class="container mt-5">
-        <h1 class="mb-4 text-center">Edit Option</h1>
-        <form method="post">
-            {% csrf_token %}
-
-            <!-- Highlighted Dropdown Section -->
-            <div class="highlight-section">
-                <label for="q_id">LIST OF QUESTION IDS AND ITS CORRESPONDING QUESTIONS</label>
-                <select class="form-control" id="q_id" name="q_id">
-                    {% for question in questions %}
-                        <option value="{{ question.q_id }}" data-question-text="{{ question.question_text }}" 
-                            {% if question.q_id == option.q_id %} selected {% endif %}>
-                            {{ question.q_id }} - {{ question.question_text }}
-                        </option>
-                    {% endfor %}
-                </select>
+<body>
+    <section class="py-7 py-md-5 bg-light-gray">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between flex-md-nowrap flex-wrap">
+                <h2 class="fs-15 fw-bolder mb-0">Edit Question Details</h2>
+                <div class="d-flex align-items-center gap-6">
+                    <a href="../main/frontend-landingpage.html" class="text-muted fw-bolder link-primary fs-3 text-uppercase">
+                        Matdash
+                    </a>
+                    <iconify-icon icon="solar:alt-arrow-right-outline" class="fs-5 text-muted"></iconify-icon>
+                    <a href="#" class="text-primary link-primary fw-bolder fs-3 text-uppercase">
+                        Portfolio
+                    </a>
+                </div>
             </div>
+        </div>
+    </section>
 
-            <!-- Option Text and Other Form Fields -->
-            <div class="mb-3">
-                {{ form.as_p }}
-            </div>
+    <div class="body-wrapper">
+        <div class="container mt-5">
+            <form method="post" action="{% url 'question_edit' question.q_id %}" class="needs-validation" novalidate>
+                {% csrf_token %}
+                <div class="row g-3">
+                    
+                    <!-- Order ID -->
+                    <div class="col-md-6">
+                        <label for="order_id" class="form-label">Order ID</label>
+                        <input type="number" id="order_id" name="order_id" class="form-control" 
+                               value="{{ question.order_id }}" required>
+                    </div>
 
-            <!-- Submit and Cancel Buttons -->
-            <div class="d-flex justify-content-between">
-                <button type="submit" class="btn btn-primary">Save</button>
-                <a href="{% url 'option_list' %}" class="btn btn-secondary">Cancel</a>
-            </div>
-        </form>
+                    <!-- Question Text -->
+                    <div class="col-md-6">
+                        <label for="question_text" class="form-label">Question Text</label>
+                        <input type="text" id="question_text" name="question_text" class="form-control" 
+                               value="{{ question.question_text }}" required>
+                    </div>
+
+                    <!-- Section -->
+                    <div class="col-md-6">
+                        <label for="section" class="form-label">Section</label>
+                        <select id="section" name="section" class="form-select" required>
+                            {% for key, value in question.SECTION_CHOICES %}
+                                <option value="{{ key }}" {% if question.section == key %}selected{% endif %}>
+                                    {{ value }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Answer Type -->
+                    <div class="col-md-6">
+                        <label for="answer_type" class="form-label">Answer Type</label>
+                        <select id="answer_type" name="answer_type" class="form-select" required>
+                            {% for key, value in question.ANSWER_TYPE_CHOICES %}
+                                <option value="{{ key }}" {% if question.answer_type == key %}selected{% endif %}>
+                                    {{ value }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Expand Question -->
+                    <div class="col-md-6">
+                        <label for="expand_question" class="form-label">Expand Question</label>
+                        <select id="expand_question" name="expand_question" class="form-select" required>
+                            {% for key, value in question.CHOICES %}
+                                <option value="{{ key }}" {% if question.expand_question == key %}selected{% endif %}>
+                                    {{ value }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Compulsory -->
+                    <div class="col-md-6">
+                        <label for="compulsary" class="form-label">Compulsory</label>
+                        <select id="compulsary" name="compulsary" class="form-select" required>
+                            {% for key, value in question.COMPULSORY_CHOICES %}
+                                <option value="{{ key }}" {% if question.compulsary == key %}selected{% endif %}>
+                                    {{ value }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Status -->
+                    <div class="col-md-6">
+                        <label for="status" class="form-label">Status</label>
+                        <select id="status" name="status" class="form-select" required>
+                            {% for key, value in question.STATUS_CHOICES %}
+                                <option value="{{ key }}" {% if question.status == key %}selected{% endif %}>
+                                    {{ value }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+        
+                <!-- Buttons -->
+                <div class="d-flex justify-content-start mt-4">
+                    <button type="submit" class="btn btn-primary btn-sm me-2">
+                        <i class="ti ti-send me-1"></i> Save
+                    </button>
+                    <a href="{% url 'question_list' %}" class="btn btn-danger btn-sm">Cancel</a>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <script>
-        // When the q_id is selected, update the question_text field
-        document.getElementById("q_id").addEventListener("change", function() {
-            var selectedOption = this.options[this.selectedIndex];
-            var questionText = selectedOption.getAttribute("data-question-text");
-            document.getElementById("question_text").value = questionText;
-        });
-    </script>
+    <footer class="bg-dark">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between flex-md-nowrap flex-wrap py-13 border-top border-dark-subtle">
+                <div class="d-flex gap-3">
+                    <img src="{% static '/dist/assets/images/logos/logo-icon-white.svg' %}" alt="logo">
+                    <p class="text-white opacity-50 mb-0">All rights reserved by info@kochi.digital. </p>
+                </div>
+                <div>
+                    <p class="text-white mb-0">
+                        <span class="opacity-50">Produced by</span>
+                        <a href="https://adminmart.com/" class="text-white link-primary">Department of Computer Science NASC</a>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'dist/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'dist/assets/libs/simplebar/dist/simplebar.min.js' %}"></script>
+    <script src="{% static 'dist/assets/js/theme/app.init.js' %}"></script>
+    <script src="{% static 'dist/assets/js/theme/theme.js' %}"></script>
+    <script src="{% static 'dist/assets/js/theme/app.min.js' %}"></script>
+    <script src="{% static 'dist/assets/js/theme/sidebarmenu.js' %}"></script>
+    
+    <!-- Solar Icons (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+    <script src="{% static 'dist/assets/libs/fullcalendar/index.global.min.js' %}"></script>
+    <script src="{% static 'dist/assets/js/apps/calendar-init.js' %}"></script>
+    <script src="{% static 'dist/assets/js/vendor.min.js' %}"></script>
+    <script src="{% static 'dist/assets/libs/apexcharts/dist/apexcharts.min.js' %}"></script>
+    <script src="{% static 'dist/assets/js/dashboards/dashboard3.js' %}"></script>
+
 </body>
 </html>

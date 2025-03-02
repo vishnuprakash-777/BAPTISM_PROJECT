@@ -61,10 +61,11 @@ from .views import (
     secretary_register,
     logout_user,
     user_login,
-    user_register
-    
-
-
+    user_register,
+    logout_user2,
+    priest_login,
+    priest_register,
+    priest_dashboard,
 )
 
 urlpatterns = [
@@ -151,10 +152,15 @@ urlpatterns = [
     path("login/", secretary_login, name="secretary_login"),
     path("register/", secretary_register, name="secretary_register"),
     path("logout/", logout_user, name="logout"),
+    path("logout2/", logout_user2, name="logout2"),
 
     path("userlogin/", user_login, name="user_login"),
     path("userregister/", user_register, name="user_register"),
     path("userlogout/", logout_user, name="logout"),
+
+    path('priestlogin/', priest_login, name='priest_login'),
+    path('priestregister/', priest_register, name='priest_register'),
+    path('dashboardpriest/', priest_dashboard, name='priest_dashboard'),
 
 
 ]

@@ -97,23 +97,37 @@ class Baptism(models.Model):
 
    
     
+from django.db import models
+from django.utils.timezone import now
+
 class LoginDetails(models.Model):
     user_id = models.AutoField(primary_key=True)
     user_name = models.CharField(max_length=255, unique=True)
-    password = models.CharField(max_length=255)
+    password = models.CharField(max_length=255)  # Consider using Django's authentication system
     role = models.CharField(max_length=50)
     last_login = models.DateTimeField(default=now)
     contact_no = models.CharField(max_length=15)
     email = models.EmailField(unique=True)
+
     STATUS_CHOICES = [
         ('Active', 'Active'),
         ('Inactive', 'Inactive'),
     ]
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Active')
-    parish_id = models.IntegerField(default=1)
+
+    # Foreign Key to ParishDetails
+    parish = models.ForeignKey(
+        'ParishDetails',  # Use the model name as a string to avoid circular import issues
+        on_delete=models.CASCADE,  # Deleting a parish will delete associated users
+        null=True,  # Allow users without a parish
+        blank=True
+    )
 
     def __str__(self):
         return self.user_name
+
+
+   
     
 
 
@@ -190,7 +204,6 @@ class Answer(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Active')
     created_time = models.DateTimeField(default=now)
     advanced_baptism_id = models.IntegerField(null=False)
-
 
 
 class Question(models.Model):

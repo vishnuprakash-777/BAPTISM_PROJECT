@@ -203,3 +203,41 @@ class UserRegistrationForm(forms.ModelForm):
             user.save()
         return user
 
+
+class PriestLoginForm(forms.Form):
+    user_name = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), required=True)
+
+class PriestRegistrationForm(forms.ModelForm):
+    confirm_password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}), required=True
+    )
+
+    class Meta:
+        model = LoginDetails
+        fields = ['user_name', 'password', 'contact_no', 'email', 'parish']
+        widgets = {
+            'password': forms.PasswordInput(attrs={'class': 'form-control'}),
+            'user_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'contact_no': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'parish': forms.Select(attrs={'class': 'form-control'}),
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password")
+        confirm_password = cleaned_data.get("confirm_password")
+
+        if password and confirm_password and password != confirm_password:
+            self.add_error('confirm_password', "Passwords do not match.")
+
+        return cleaned_data  # Ensure valid data is returned
+
+    def save(self, commit=True):
+        priest = super().save(commit=False)
+        priest.password = make_password(self.cleaned_data["password"])  # Encrypt password
+        priest.role = "Priest"  # Assign "Priest" role
+        if commit:
+            priest.save()
+        return priest

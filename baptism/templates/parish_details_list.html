@@ -35,24 +35,20 @@
         <title>Parish Details</title>
     </head>
 <body>
-        <section class="py-7 py-md-5 bg-light-gray">
+          <section class="py-7 py-md-5 bg-light-gray">
             <div class="container-fluid">
-              <div class="d-flex justify-content-between flex-md-nowrap flex-wrap">
-                <h2 class="fs-15 fw-bolder mb-0">
-                    Parish Details
-                </h2>
-                <div class="d-flex align-items-center gap-6">
-                  <a href="../main/frontend-landingpage.html" class="text-muted fw-bolder link-primary fs-3 text-uppercase">
-                    Matdash
-                  </a>
-                  <iconify-icon icon="solar:alt-arrow-right-outline" class="fs-5 text-muted"></iconify-icon>
-                  <a href="#" class="text-primary link-primary fw-bolder fs-3 text-uppercase">
-                    Portfolio
-                  </a>
+                <div class="d-flex justify-content-between flex-md-nowrap flex-wrap">
+                    <h2 class="fs-15 fw-bolder mb-0">Parish Details</h2>
+                    <div class="d-flex align-items-center gap-6">
+                        <a href="{% url 'baptism_dashboard' %}" class="text-muted fw-bolder link-primary fs-3 text-uppercase">Home_Page</a>
+                        <iconify-icon icon="solar:alt-arrow-right-outline" class="fs-5 text-muted"></iconify-icon>
+                        <a href="{% url 'logout' %}" class="text-primary link-primary fw-bolder fs-3 text-uppercase">
+                            Logout
+                          </a>
+                    </div>
                 </div>
-              </div>
             </div>
-          </section>
+        </section>
           <div class="body-wrapper">
             <div class="table-responsive">
                 <table class="table table-hover table-primary">

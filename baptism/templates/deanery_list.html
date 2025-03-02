@@ -1,64 +1,88 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr" data-bs-theme="light" data-color-theme="Blue_Theme" data-layout="vertical">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deanery List</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Favicon icon -->
+    <link rel="shortcut icon" type="image/png" href="{% static '/dist/assets/images/logos/favicon.png' %}" />
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="{% static 'dist/assets/css/styles.css' %}" />
+
+    <style>
+        footer.bg-dark {
+            position: relative;
+            bottom: 0;
+            width: 100%;
+            z-index: 10;
+        }
+        .body-wrapper {
+            min-height: 80vh;
+            padding-bottom: 80px;
+        }
+        .custom-table {
+            width: 100%;
+            max-width: 950px;
+            margin: 0 auto;
+        }
+    </style>
+
+    <title>Deanery Details</title>
 </head>
-<body class="bg-light">
-    <div class="container mt-5">
-        <h2 class="text-center">Deanery List</h2>
-
-        <!-- Search Bar -->
-        <form method="GET" class="mb-4">
-            <div class="input-group">
-                <input 
-                    type="text" 
-                    name="q" 
-                    class="form-control" 
-                    placeholder="Search by deanery name or dean name" 
-                    value="{{ request.GET.q }}">
-                <button class="btn btn-primary" type="submit">Search</button>
+<body>
+    <section class="py-7 py-md-5 bg-light-gray">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between flex-md-nowrap flex-wrap">
+                <h2 class="fs-15 fw-bolder mb-0">Deanery Details</h2>
+                <div class="d-flex align-items-center gap-6">
+                    <a href="{% url 'baptism_dashboard' %}" class="text-muted fw-bolder link-primary fs-3 text-uppercase">Home_Page</a>
+                    <iconify-icon icon="solar:alt-arrow-right-outline" class="fs-5 text-muted"></iconify-icon>
+                    <a href="{% url 'logout' %}" class="text-primary link-primary fw-bolder fs-3 text-uppercase">
+                        Logout
+                      </a>
+                </div>
             </div>
-        </form>
+        </div>
+    </section>
 
-        <!-- Table -->
-        <table class="table table-striped table-bordered">
-            <thead class="thead-dark">
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Dean Name</th>
-                    <th>Address</th>
-                    <th>Status</th>
-                    <th>Created Time</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for deanery in page_obj.object_list %}
-                <tr>
-                    <td>{{ deanery.deanery_id }}</td>
-                    <td>{{ deanery.deanery_name }}</td>
-                    <td>{{ deanery.dean_name }}</td>
-                    <td>{{ deanery.address }}</td>
-                    <td>{{ deanery.status }}</td>
-                    <td>{{ deanery.created_time }}</td>
-                    <td>
-                        <a href="{% url 'deanery_edit' deanery.deanery_id %}" class="btn btn-sm btn-warning">Edit</a>
-                        <a href="{% url 'deanery_delete' deanery.deanery_id %}" class="btn btn-sm btn-danger">Delete</a>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="7" class="text-center">No deaneries found</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="body-wrapper">
+        <div class="table-responsive">
+            <table class="table table-hover table-primary">
+                <thead class="bg-primary text-white">
+                    <tr>
+                        <th>Deanery Name</th>
+                        <th>Dean Name</th>
+                        <th>Address</th>
+                        <th>Status</th>
+                        <th>Created Time</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for deanery in page_obj.object_list %}
+                    <tr>
+                        <td>{{ deanery.deanery_name }}</td>
+                        <td>{{ deanery.dean_name }}</td>
+                        <td>{{ deanery.address }}</td>
+                        <td>{{ deanery.status }}</td>
+                        <td>{{ deanery.created_time|date:"Y-m-d H:i:s" }}</td>
+                        <td>
+                            <a href="{% url 'deanery_edit' deanery.deanery_id %}" class="btn btn-sm btn-warning">Edit</a>
+                            <a href="{% url 'deanery_delete' deanery.deanery_id %}" class="btn btn-sm btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center">No deaneries found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-        <!-- Pagination Controls -->
         <nav aria-label="Page navigation example">
             <ul class="pagination justify-content-center">
                 {% if page_obj.has_previous %}
@@ -82,11 +106,56 @@
                 {% endif %}
             </ul>
         </nav>
+       
+     
 
         <!-- Add New Deanery Button -->
-        <a href="{% url 'deanery_add' %}" class="btn btn-success mt-3">Add New Deanery</a>
+        <div style="text-align: center;">
+            <a href="{% url 'deanery_add' %}" class="btn rounded-pill waves-effect waves-light bg-primary-subtle text-primary">Add New Deanery</a>
+        </div>
     </div>
 
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <footer class="bg-dark">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between flex-md-nowrap flex-wrap py-13 border-top border-dark-subtle">
+                <div class="d-flex gap-3">
+                    <img src="{% static '/dist/assets/images/logos/logo-icon-white.svg' %}" alt="logo">
+                    <p class="text-white opacity-50 mb-0">All rights reserved by info@kochi.digital.</p>
+                </div>
+                <div>
+                    <p class="text-white mb-0">
+                        <span class="opacity-50">Produced by</span>
+                        <a href="https://adminmart.com/" class="text-white link-primary">Department of Computer Science NASC</a>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Import Js Files -->
+    <script src="{% static 'dist/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'dist/assets/libs/simplebar/dist/simplebar.min.js' %}"></script>
+    <script src="{% static 'dist/assets/js/theme/app.init.js' %}"></script>
+    <script src="{% static 'dist/assets/js/theme/theme.js' %}"></script>
+    <script src="{% static 'dist/assets/js/theme/app.min.js' %}"></script>
+    <script src="{% static 'dist/assets/js/theme/sidebarmenu.js' %}"></script>
+
+    <!-- Solar Icons (CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+    <script src="{% static 'dist/assets/libs/fullcalendar/index.global.min.js' %}"></script>
+    <script src="{% static 'dist/assets/js/apps/calendar-init.js' %}"></script>
+    <script src="{% static 'dist/assets/js/vendor.min.js' %}"></script>
+    <script src="{% static 'dist/assets/libs/apexcharts/dist/apexcharts.min.js' %}"></script>
+    <script src="{% static 'dist/assets/js/dashboards/dashboard3.js' %}"></script>
+    <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/libs/simplebar/dist/simplebar.min.js"></script>
+    <script src="../assets/js/theme/app.init.js"></script>
+    <script src="../assets/js/theme/theme.js"></script>
+    <script src="../assets/js/theme/app.min.js"></script>
+    <script src="../assets/js/theme/sidebarmenu.js"></script>
+    <script src="../assets/libs/prismjs/prism.js"></script>
 </body>
 </html>

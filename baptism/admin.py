@@ -21,14 +21,14 @@ class ParishDetailsAdmin(admin.ModelAdmin):
 
 @admin.register(LoginDetails)
 class LoginDetailsAdmin(admin.ModelAdmin):
-    list_display = ('user_name', 'email', 'contact_no', 'role', 'status', 'last_login', 'parish_id')
+    list_display = ('user_name', 'email', 'contact_no', 'role', 'status', 'last_login','parish')
     search_fields = ('user_name', 'email', 'contact_no')
-    list_filter = ('role', 'status', 'parish_id')
+    list_filter = ('role', 'status',)
     ordering = ('-last_login',)
 
     fieldsets = (
         (None, {
-            'fields': ('user_name', 'password', 'email', 'contact_no', 'role', 'status', 'parish_id')
+            'fields': ('user_name', 'password', 'email', 'contact_no','parish', 'role', 'status',)
         }),
         ('Timestamps', {
             'fields': ('last_login',)

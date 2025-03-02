@@ -331,7 +331,7 @@ def answer_edit(request, pk):
             return redirect('answer_list')  # Redirect to the list page after saving
     else:
         form = AnswerForm(instance=answer)  # Prepopulate form with existing answer data
-    return render(request, 'answer_edit.html', {'form': form})
+    return render(request, 'answer_edit.html', {'form': form,'answer': answer})
 
 # Delete an answer
 def answer_delete(request, answer_id):
@@ -407,7 +407,7 @@ def option_edit(request, pk):
     else:
         form = OptionForm(instance=option)  # Prepopulate form with existing option data
     questions = Question.objects.all()  # Get all questions
-    return render(request, 'option_edit.html', {'form': form, 'questions': questions})
+    return render(request, 'option_edit.html', {'form': form, 'questions': questions,'option': option})
 
 
 
@@ -456,7 +456,7 @@ def question_edit(request, pk):
             return redirect('question_list')  # Redirect to the list page after saving
     else:
         form = QuestionForm(instance=question)  # Prepopulate form with existing question data
-    return render(request, 'question_edit.html', {'form': form})
+    return render(request, 'question_edit.html', {'form': form,'question': question})
 
 # Delete a question
 def question_delete(request, question_id):
@@ -545,7 +545,7 @@ def section_questions(request, section_name):
                         answer = Answer(
                             q_id=question.q_id,
                             basic_baptism_id=1,  # Replace with the actual ID
-                            advanced_baptism_id=request.user.id,  # Example: user ID
+                            advanced_baptism_id=1,  # Example: user ID
                             status="active"
                         )
 
@@ -586,6 +586,7 @@ def section_questions(request, section_name):
 
 
 
+
 from django.shortcuts import render, redirect
 from .models import Baptism  # Import the Baptism model
 
@@ -598,7 +599,7 @@ def home_page(request):
     # Fetch all baptism records associated with the logged-in user
     baptisms = Baptism.objects.filter(user_id=user_id).order_by('-created_time')
 
-    return render(request, "home.html", {"user_id": user_id, "baptisms": baptisms})
+    return render(request, "baptism/home.html", {"user_id": user_id, "baptisms": baptisms})
 
 
 
@@ -656,7 +657,7 @@ def deanery_edit(request, pk):
             return redirect('deanery_list')  # Redirect to the list page after saving
     else:
         form = DeaneryForm(instance=deanery)  # Prepopulate form with existing deanery data
-    return render(request, 'deanery_edit.html', {'form': form})
+    return render(request, 'deanery_edit.html', {'form': form,'deanery': deanery})
 
 # Delete a deanery
 def deanery_delete(request, deanery_id):
@@ -1119,7 +1120,7 @@ def filter_baptisms_by_month(request, status, template_name):
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.hashers import check_password
-from .forms import SecretaryLoginForm, SecretaryRegistrationForm, UserLoginForm, UserRegistrationForm
+from .forms import SecretaryLoginForm, SecretaryRegistrationForm, UserLoginForm, UserRegistrationForm,PriestLoginForm,PriestRegistrationForm
 from .models import LoginDetails
 
 # Common login function
@@ -1191,3 +1192,38 @@ def logout_user(request):
     messages.success(request, "Logged out successfully.")
     return redirect("secretary_login")  # Redirect to secretary login or user login as needed
 
+def logout_user2(request):
+    request.session.flush()  
+    messages.success(request, "Logged out successfully.")
+    return redirect("user_login")  # Redirect to secretary login or user login as needed
+
+
+# Common login function for priests
+def priest_login(request):
+    return authenticate_user(request, role="Priest", login_form_class=PriestLoginForm, template_name="priest_login.html", dashboard_redirect="priest_dashboard")
+
+# Common registration function for priests
+def priest_register(request):
+    return register_user(request, role="Priest", registration_form_class=PriestRegistrationForm, login_redirect="priest_login", template_name="priest_register.html")
+
+# Priest logout
+def logout_priest(request):
+    request.session.flush()
+    messages.success(request, "Logged out successfully.")
+    return redirect("priest_login")  # Redirect to priest login page
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from .models import Baptism, LoginDetails  # Import necessary models
+
+@login_required
+def priest_dashboard(request):
+    """Display only baptisms from the priest's registered church"""
+    priest = LoginDetails.objects.get(user_id=request.user.id) # Get logged-in priest's details
+    
+    if priest.role == 'Priest' and priest.parish:
+        baptisms = Baptism.objects.filter(place_of_baptism=priest.parish)  # Get baptisms for the priest's parish
+    else:
+        baptisms = []  # If the priest has no parish, show no data
+
+    return render(request, 'priest_dashboard.html', {'baptisms': baptisms})

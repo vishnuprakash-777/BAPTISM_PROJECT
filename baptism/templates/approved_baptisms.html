@@ -40,6 +40,38 @@
             align-items: center;
            
         }
+        .body-wrapper {
+            display: flex;
+            min-height: calc(100vh - 100px); /* Adjust based on your header height */
+        }
+        .sidebar-nav {
+            width: 260px;
+            background: #fff;
+            border-right: 1px solid rgba(0,0,0,0.1);
+            padding: 1rem;
+        }
+        .sidebar-nav {
+        border-right: 1px solid #e0e0e0; /* Light gray border */
+        box-shadow: 1px 0 3px rgba(0, 0, 0, 0.05); /* Subtle shadow for depth */
+      }
+      .body-wrapper {
+    display: flex;
+    min-height: calc(100vh - 100px); /* Adjust based on your header height */
+    padding-bottom: 0; /* Remove padding-bottom that might be causing issues */
+}
+
+.sidebar-nav {
+    width: 260px;
+    flex-shrink: 0; /* Prevent sidebar from shrinking */
+    background: #fff;
+    border-right: 1px solid #e0e0e0;
+    box-shadow: 1px 0 3px rgba(0, 0, 0, 0.05);
+}
+
+.container-fluid.custom-container {
+    flex-grow: 1; /* Allow content area to grow and fill available space */
+    padding: 20px;
+}
     </style>
 
     <title>Parish Details</title>
@@ -61,6 +93,91 @@
     </section>
 
     <div class="body-wrapper">
+        <nav class="sidebar-nav scroll-sidebar" data-simplebar>
+            <ul class="sidebar-menu" id="sidebarnav">
+              <!-- Dashboard Section -->
+              <li class="nav-small-cap">
+                <span class="hide-menu">Baptism Management</span>
+              </li>
+              <li class="sidebar-item">
+                <a class="sidebar-link" href="{% url 'baptism_dashboard' %}" aria-expanded="false">
+                  <iconify-icon icon="solar:home-angle-line-duotone"></iconify-icon>
+                  <span class="hide-menu">Dashboard</span>
+                </a>
+              </li>
+          
+              <!-- Baptism Applications -->
+              <li class="nav-small-cap">
+                <span class="hide-menu">Applications</span>
+              </li>
+              <li class="sidebar-item">
+                <a class="sidebar-link" href="{% url 'pending_baptisms' %}">
+                  <iconify-icon icon="solar:clock-circle-line-duotone"></iconify-icon>
+                  <span class="hide-menu">Pending Applications</span>
+                </a>
+              </li>
+              <li class="sidebar-item">
+                <a class="sidebar-link" href="{% url 'approved_baptisms2' %}">
+                  <iconify-icon icon="solar:check-circle-line-duotone"></iconify-icon>
+                  <span class="hide-menu">Approved Applications</span>
+                </a>
+              </li>
+              <li class="sidebar-item">
+                <a class="sidebar-link" href="{% url 'rejected_baptisms' %}">
+                  <iconify-icon icon="solar:close-circle-line-duotone"></iconify-icon>
+                  <span class="hide-menu">Rejected Applications</span>
+                </a>
+              </li>
+          
+              <!-- Management Tools -->
+              <li class="nav-small-cap">
+                <span class="hide-menu">Management</span>
+              </li>
+              <li class="sidebar-item">
+                <a class="sidebar-link" href="{% url 'baptism_list_and_edit' %}">
+                  <iconify-icon icon="solar:pen-line-duotone"></iconify-icon>
+                  <span class="hide-menu">Manage Baptisms</span>
+                </a>
+              </li>
+              <li class="sidebar-item">
+                <a class="sidebar-link" href="{% url 'approved_baptisms' %}">
+                  <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                  <span class="hide-menu">Certificate Generation</span>
+                </a>
+              </li>
+          
+              <!-- Parishes and Deaneries Section -->
+              <li class="nav-small-cap">
+                <span class="hide-menu">Church Structure</span>
+              </li>
+              <li class="sidebar-item">
+                <a class="sidebar-link" href="{% url 'parish_details_list' %}">
+                  <iconify-icon icon="solar:home-2-line-duotone"></iconify-icon>
+                  <span class="hide-menu">Parishes</span>
+                </a>
+              </li>
+              <li class="sidebar-item">
+                <a class="sidebar-link" href="{% url 'deanery_list' %}">
+                  <iconify-icon icon="solar:map-point-line-duotone"></iconify-icon>
+                  <span class="hide-menu">Deaneries</span>
+                </a>
+              </li>
+          
+         
+          
+              <!-- Settings -->
+              <li class="nav-small-cap">
+                <span class="hide-menu">Settings</span>
+              </li>
+              <li class="sidebar-item">
+                <a class="sidebar-link" href="{% url 'logout' %}">
+                  <iconify-icon icon="solar:logout-3-line-duotone"></iconify-icon>
+                  <span class="hide-menu">Logout</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
+
         <div class="container-fluid custom-container">
             <div class="card card-body py-3">
                 <div class="row align-items-center">

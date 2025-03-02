@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Baptism Records for Your Parish</h2>
+    
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Child Name</th>
+                <th>Date of Baptism</th>
+                <th>Time</th>
+                <th>Parents</th>
+                <th>Godparents</th>
+                <th>Contact</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for baptism in baptisms %}
+            <tr>
+                <td>{{ baptism.child_name_first }} {{ baptism.child_name_second }}</td>
+                <td>{{ baptism.date_of_baptism }}</td>
+                <td>{{ baptism.time_of_baptism }}</td>
+                <td>{{ baptism.father_name }} & {{ baptism.mother_name }}</td>
+                <td>{{ baptism.godfather_name }} & {{ baptism.godmother_name }}</td>
+                <td>{{ baptism.contact_no }}</td>
+                <td>{{ baptism.status }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center">No baptism records found for your parish.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
