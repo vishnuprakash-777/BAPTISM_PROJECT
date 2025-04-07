@@ -60,8 +60,8 @@ class Baptism(models.Model):
     father_name = models.CharField(max_length=255)
     godfather_name = models.CharField(max_length=255)
     godmother_name = models.CharField(max_length=255)
-    remark = models.CharField(max_length=255, default='Nil')
-    contact_no = models.CharField(max_length=15)
+    remark = models.CharField(max_length=255, default='Nil',null=True)
+    contact_no = models.CharField(max_length=10)
     email = models.EmailField()
     advanced_baptism_id = models.IntegerField(editable=False, null=True)  # Non-editable and nullable
     priest_id = models.IntegerField(default=1)
@@ -108,7 +108,7 @@ class LoginDetails(models.Model):
     last_login = models.DateTimeField(default=now)
     contact_no = models.CharField(max_length=15)
     email = models.EmailField(unique=True)
-
+    device_token = models.CharField(max_length=64, blank=True, null=True)
     STATUS_CHOICES = [
         ('Active', 'Active'),
         ('Inactive', 'Inactive'),

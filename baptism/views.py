@@ -1124,19 +1124,34 @@ from .forms import SecretaryLoginForm, SecretaryRegistrationForm, UserLoginForm,
 from .models import LoginDetails
 
 # Common login function
+from django.utils.crypto import get_random_string
+
 def authenticate_user(request, role, login_form_class, template_name, dashboard_redirect):
     if request.method == "POST":
         form = login_form_class(request.POST)
         if form.is_valid():
             user_name = form.cleaned_data["user_name"]
             password = form.cleaned_data["password"]
+            remember_device = request.POST.get("rememberMe")  # Check if "Remember this Device" is selected
 
             try:
                 user = LoginDetails.objects.get(user_name=user_name, role=role)
                 if check_password(password, user.password):  
-                    request.session["user_id"] = user.user_id  
-                    messages.success(request, "Login successful!")
-                    return redirect(dashboard_redirect)  
+                    request.session["user_id"] = user.user_id  # Store user ID in session
+
+                    # Handle "Remember this Device"
+                    if remember_device:
+                        device_token = get_random_string(32)  # Generate a random token
+                        response = redirect(dashboard_redirect)  # Redirect to the dashboard
+                        response.set_cookie(
+                            "device_token", device_token, max_age=30 * 24 * 60 * 60
+                        )  # Cookie valid for 30 days
+                        user.device_token = device_token  # Save the token in the user's record
+                        user.save()
+                        return response
+                    else:
+                        return redirect(dashboard_redirect)  # Redirect without setting a cookie
+
             except LoginDetails.DoesNotExist:
                 pass  # Avoid exposing username existence
 
@@ -1163,7 +1178,7 @@ def register_user(request, role, registration_form_class, login_redirect, templa
             user.save()
             messages.success(request, "Registration successful! Please log in.")
             return redirect(login_redirect)
-        else:
+        #else:
             messages.error(request, "Please correct the errors below.")
     else:
         form = registration_form_class()
@@ -1227,3 +1242,24 @@ def priest_dashboard(request):
         baptisms = []  # If the priest has no parish, show no data
 
     return render(request, 'priest_dashboard.html', {'baptisms': baptisms})
+
+
+# middleware.py
+from django.shortcuts import redirect
+from .models import LoginDetails
+
+class RememberDeviceMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if not request.user.is_authenticated:
+            device_token = request.COOKIES.get("device_token")
+            if device_token:
+                try:
+                    user = LoginDetails.objects.get(device_token=device_token)
+                    request.session["user_id"] = user.user_id  # Log the user in
+                except LoginDetails.DoesNotExist:
+                    pass  # Invalid token, proceed as unauthenticated
+
+        return self.get_response(request)

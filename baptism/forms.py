@@ -24,7 +24,14 @@ class BaptismForm(forms.ModelForm):
             'time_of_baptism': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
             'dob': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
         }
-
+        
+    def clean_contact_no(self):
+        contact_no = self.cleaned_data.get('contact_no')
+        if not contact_no.isdigit():
+            raise forms.ValidationError("Contact number must contain only digits.")
+        if len(contact_no) != 10:
+            raise forms.ValidationError("Contact number must be exactly 10 digits.")
+        return contact_no
 
 
 class ParishDetailsForm(forms.ModelForm):
@@ -38,7 +45,13 @@ class ParishDetailsForm(forms.ModelForm):
             'address': forms.Textarea(attrs={'rows': 4}),
         }
 
-
+    def clean_contact_no(self):
+        contact_no = self.cleaned_data.get('contact_no')
+        if not contact_no.isdigit():
+            raise forms.ValidationError("Contact number must contain only digits.")
+        if len(contact_no) != 10:
+            raise forms.ValidationError("Contact number must be exactly 10 digits.")
+        return contact_no
 
 
 class BaptismAdvancedForm(forms.ModelForm):
@@ -165,6 +178,14 @@ class SecretaryRegistrationForm(forms.ModelForm):
             user.save()
         return user
     
+    def clean_contact_no(self):
+        contact_no = self.cleaned_data.get('contact_no')
+        if not contact_no.isdigit():
+            raise forms.ValidationError("Contact number must contain only digits.")
+        if len(contact_no) != 10:
+            raise forms.ValidationError("Contact number must be exactly 10 digits.")
+        return contact_no
+    
 
 class UserLoginForm(forms.Form):
     user_name = forms.CharField(max_length=255, required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -202,6 +223,14 @@ class UserRegistrationForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+    
+    def clean_contact_no(self):
+        contact_no = self.cleaned_data.get('contact_no')
+        if not contact_no.isdigit():
+            raise forms.ValidationError("Contact number must contain only digits.")
+        if len(contact_no) != 10:
+            raise forms.ValidationError("Contact number must be exactly 10 digits.")
+        return contact_no
 
 
 class PriestLoginForm(forms.Form):
@@ -241,3 +270,11 @@ class PriestRegistrationForm(forms.ModelForm):
         if commit:
             priest.save()
         return priest
+    
+    def clean_contact_no(self):
+        contact_no = self.cleaned_data.get('contact_no')
+        if not contact_no.isdigit():
+            raise forms.ValidationError("Contact number must contain only digits.")
+        if len(contact_no) != 10:
+            raise forms.ValidationError("Contact number must be exactly 10 digits.")
+        return contact_no

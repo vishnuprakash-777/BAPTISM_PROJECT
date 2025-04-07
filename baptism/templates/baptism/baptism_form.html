@@ -102,10 +102,15 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="contact_no" class="form-label">Contact No</label>
-                                <input type="text" id="contact_no" name="contact_no" class="form-control" placeholder="Enter contact number" required>
-                            </div>
+                        <div class="mb-3">
+                            <label for="contact_no" class="form-label">Contact No</label>
+                            <input type="text" id="contact_no" name="contact_no" class="form-control" placeholder="Enter contact number" required>
+                            <small class="form-control-feedback">Enter a valid 10-digit contact number</small>
+                            {% if form.contact_no.errors %}
+                                <div class="text-danger">
+                                    {{ form.contact_no.errors|join:", " }}
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                     <div class="row">
