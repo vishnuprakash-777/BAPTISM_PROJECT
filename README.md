@@ -87,8 +87,8 @@ The **Baptism Management System** is a web-based application designed to streaml
 
 ```bash
 # Clone the Repository
-git clone https://github.com/yourusername/baptism-management-system.git
-cd baptism-management-system
+(https://github.com/vishnuprakash-777/BAPTISM_PROJECT.git)
+cd baptism_project
 
 # Install Dependencies
 pip install -r requirements.txt
